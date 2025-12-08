@@ -29,4 +29,43 @@ export default function HomeScreen() {
       setLoading(false);
     }, 1500);
   };
+
+  // 화면
+  return (
+    <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        {/* title */}
+        <Text style={styles.title}>AI</Text>
+
+        {/* 입력창 */}
+        <Text style={styles.label}>코드 입력: </Text>
+        <TextInput 
+          style={styles.input}
+          placeholder="코드를 입력하세요..."
+          multiline={true}
+          value={diffCode}
+          onChangeText={setDiffCode}/>
+
+        {/* 버튼 */}
+        <TouchableOpacity
+          style={styles.button}
+          onPress={handleGenerate} 
+          disabled={loading} 
+        > 
+          <Text style={styles.buttonText}>
+            {loading ? "생각 중입니다..." : "커밋 메시지 생성"}
+          </Text>
+        </TouchableOpacity>
+
+        {/* 결과창 */}
+        {result ? (
+          <View style={styles.resultBox}>
+            <Text style={styles.resultTitle}>[ 결과 메시지 ]</Text>
+            <Text style={styles.resultText}>{result}</Text>
+          </View>
+        ) : null}
+          
+      </ScrollView>
+    </View>
+  );
 }
