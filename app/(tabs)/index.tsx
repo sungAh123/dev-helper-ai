@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import {
+  ScrollView,
   StyleSheet,
   Text,
-  View,
   TextInput,
   TouchableOpacity,
-  ScrollView,
+  View,
 } from "react-native";
 
 export default function HomeScreen() {
@@ -24,10 +24,39 @@ export default function HomeScreen() {
     setResult(""); // 결과 초기화
 
     // 임시 서버
-    setTimeout(() => {
-      setResult("추후 추가");
+    // setTimeout(() => {
+    //   setResult("추후 추가");
+    //   setLoading(false);
+    // }, 1500);
+
+    try {
+      // 서버로 요청 보내기(http://localhost:8000/generate)
+      const response = await fetch("http://localhost:8000/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        // 사용자가 입력한 코드 JSON으로 포장해서 보냄
+        body: JSON.stringify({ diff: diffCode }),
+      });
+
+      const data = await response.json();
+
+      // 서버에서 온 응답 표시
+      if (data.result) {
+        setResult(data.result);
+      } else {
+        setResult("AI가 응답을 받아오지 못했습니다.");
+      }
+    } catch (error) {
+      console.error(error);
+      // 에러 처리
+      setResult(
+        "서버 연결 실패\nDocker가 켜져 있는지 확인해주세요.\n(Error: Connection Failed)"
+      );
+    } finally {
       setLoading(false);
-    }, 1500);
+    }
   };
 
   // 화면
