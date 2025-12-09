@@ -29,6 +29,7 @@ yarn-error.*
 # macOS
 .DS_Store
 *.pem
+Thumbs.db
 
 # local env files
 .env*.local
@@ -41,3 +42,13 @@ app-example
 # generated native folders
 /ios
 /android
+
+# python
+server/__pycache__/
+server/*.pyc
+server/venv/
+server/.venv/
+
+# Docker & AI
+ollama_data/
+*.tar.gz
