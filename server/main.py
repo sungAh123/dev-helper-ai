@@ -28,24 +28,35 @@ def generate_commit(req: CodeRequest):
     ollama_url="http://ollama:11434/api/generate"
 
     # 프롬프트 작성
-    prompt = f"""
-    You are a senior developer.
-    Based on the following git diff code, write 3 commit messages. 
-
-    Requirements:
-    - First message: Korean (한글)
-    - Second & Third messages: English
-    - Follow 'Conventional Commits' style (feat, fix, docs, etc.)
-
-    [Code Diff]:
-    {req.diff}
+    system_instruction = """
+    You are a strict code analysis AI. 
+    
+    CRITICAL RULES:
+    1. Output EXACTLY 3 lines.
+    2. Line 1: Korean. Line 2 & 3: English.
+    3. STRICLY FOLLOW 'Conventional Commits' format for ALL lines.
+       - Start EVERY line with a type: feat, fix, docs, style, refactor, chore, etc.
+       - BAD: "Add database connection"
+       - GOOD: "feat: Add database connection"
+    4. FACT CHECK: Do not lie. Only describe what is in the code.
+    5. Keep messages concise (Subject line only).
+    
+    [CORRECT OUTPUT EXAMPLE]
+    feat: 데이터베이스 연결 설정 추가
+    feat: Add database connection logic
+    refactor: Use environment variables for credentials
     """
 
     # 보낼 데이터 포장
     payload = {
-        "model": "tinyllama",   # 사용할 AI 모델 이름
-        "prompt": prompt,       # 위에서 만든 명령
-        "stream": False         # 한 번에 결과를 다 줌
+        "model": "llama3.2",   # 사용할 AI 모델 이름
+        "prompt": f"Code changes:\n{req.diff}",
+        "system": system_instruction,
+        "stream": False,
+        "options": {
+            "temperature": 0.1,  # 창의성을 낮춰서 엉뚱한 말 못하게 함
+            "top_p": 0.9
+        }
     }
 
     try:
@@ -55,7 +66,9 @@ def generate_commit(req: CodeRequest):
         response = requests.post(ollama_url, json=payload)
 
         # AI가 준 응답에서 텍스트만 뽑아서 전달
-        return {"result": response.json().get("response", "Error")}
+        result_text = response.json().get("response", "Error")
+        print("AI 응답 완료")
+        return {"result": result_text.strip()}
 
     except Exception as e:
         print(f"에러: {e}")
