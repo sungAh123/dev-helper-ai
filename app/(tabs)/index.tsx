@@ -75,7 +75,7 @@ export default function HomeScreen() {
           <Text style={styles.label}>Code Diff</Text>
           <TextInput
             style={styles.input}
-            placeholder="코드를 넣으세요..."
+            placeholder="코드를 입력하세요..."
             multiline={true}
             textAlignVertical="top"
             value={diffCode}
