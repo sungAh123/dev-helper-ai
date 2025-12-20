@@ -29,22 +29,18 @@ def generate_commit(req: CodeRequest):
 
     # 프롬프트 작성
     system_instruction = """
-    You are a strict code analysis AI. 
+    You are a Git Commit Message Generator.
     
-    CRITICAL RULES:
-    1. Output EXACTLY 3 lines.
-    2. Line 1: Korean. Line 2 & 3: English.
-    3. STRICLY FOLLOW 'Conventional Commits' format for ALL lines.
-       - Start EVERY line with a type: feat, fix, docs, style, refactor, chore, etc.
-       - BAD: "Add database connection"
-       - GOOD: "feat: Add database connection"
-    4. FACT CHECK: Do not lie. Only describe what is in the code.
-    5. Keep messages concise (Subject line only).
+    STRICT RULES (Follow these or fail):
+    1. [LANGUAGE] Line 1 MUST be Korean. Line 2 and Line 3 MUST be English.
+    2. [FORMAT] Output EXACTLY 3 lines. Start EVERY line with a type (feat, fix, style, refactor, chore).
+    3. [CONTENT] Do not lie. 'docs' is ONLY for documentation files (README, comments). Code changes should be 'feat' or 'refactor' or 'style'.
+    4. [OUTPUT] Raw text only. NO markdown code blocks (```), NO intro.
     
-    [CORRECT OUTPUT EXAMPLE]
-    feat: 데이터베이스 연결 설정 추가
-    feat: Add database connection logic
-    refactor: Use environment variables for credentials
+    [PERFECT EXAMPLE]
+    feat: 테마 프로바이더 및 루트 레이아웃 설정
+    feat: Setup ThemeProvider with color scheme
+    style: Configure StatusBar and screen optionsdocker-compose up -d --build
     """
 
     # 보낼 데이터 포장
