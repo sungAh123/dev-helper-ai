@@ -69,13 +69,13 @@ export default function HomeScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.contentContainer}>
-        <Text style={styles.headerTitle}>AI Commit Generator</Text>
+        <Text style={styles.headerTitle}>AI Commit Message Generator</Text>
 
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Code Diff</Text>
           <TextInput
             style={styles.input}
-            placeholder="코드를 붙여넣으세요..."
+            placeholder="코드를 넣으세요..."
             multiline={true}
             textAlignVertical="top"
             value={diffCode}
