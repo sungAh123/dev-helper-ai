@@ -8,10 +8,21 @@ import {
   View,
 } from "react-native";
 
+// HomeScreen 함수 밖
+interface HistoryRecord {
+  id: number;
+  code: string;
+  result: string;
+  timestamp: string;
+}
+
 export default function HomeScreen() {
   const [diffCode, setDiffCode] = useState(""); // 코드 저장
-  const [result, setResult] = useState(""); // commit message 저장
   const [loading, setLoading] = useState(false); // ai가 생각 중인지 체크
+
+  // 히스토리 목록 (과거 기록 저장용)
+  // 형식: { id: 1, code: "...", result: "..." }
+  const [history, setHistory] = useState<HistoryRecord[]>([]);
 
   const handleGenerate = async () => {
     // 입력 확인
@@ -21,13 +32,7 @@ export default function HomeScreen() {
     }
 
     setLoading(true);
-    setResult(""); // 결과 초기화
-
-    // 임시 서버
-    // setTimeout(() => {
-    //   setResult("추후 추가");
-    //   setLoading(false);
-    // }, 1500);
+    //setResult(""); // 결과 초기화
 
     try {
       // 서버로 요청 보내기(http://localhost:8000/generate)
@@ -41,19 +46,20 @@ export default function HomeScreen() {
       });
 
       const data = await response.json();
+      const newResult = data.result || "AI 응답 실패";
 
-      // 서버에서 온 응답 표시
-      if (data.result) {
-        setResult(data.result);
-      } else {
-        setResult("AI가 응답을 받아오지 못했습니다.");
-      }
+      // 새로운 결과를 히스토리 맨 앞에 추가 (최신순)
+      const newRecord = {
+        id: Date.now(), // 고유 ID
+        code: diffCode,
+        result: newResult,
+        timestamp: new Date().toLocaleTimeString(),
+      };
+
+      setHistory([newRecord, ...history]);
     } catch (error) {
       console.error(error);
-      // 에러 처리
-      setResult(
-        "서버 연결 실패\nDocker가 켜져 있는지 확인해주세요.\n(Error: Connection Failed)"
-      );
+      alert("서버 연결 실패. Docker를 확인해주세요.");
     } finally {
       setLoading(false);
     }
@@ -62,39 +68,49 @@ export default function HomeScreen() {
   // 화면
   return (
     <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        {/* title */}
-        <Text style={styles.title}>AI</Text>
+      <View style={styles.contentContainer}>
+        <Text style={styles.headerTitle}>AI Commit Generator</Text>
 
-        {/* 입력창 */}
-        <Text style={styles.label}>코드 입력: </Text>
-        <TextInput
-          style={styles.input}
-          placeholder="코드를 입력하세요..."
-          multiline={true}
-          value={diffCode}
-          onChangeText={setDiffCode}
-        />
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Code Diff</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="코드를 붙여넣으세요..."
+            multiline={true}
+            textAlignVertical="top"
+            value={diffCode}
+            onChangeText={setDiffCode}
+          />
+        </View>
 
-        {/* 버튼 */}
         <TouchableOpacity
           style={styles.button}
           onPress={handleGenerate}
           disabled={loading}
         >
           <Text style={styles.buttonText}>
-            {loading ? "생각 중입니다..." : "커밋 메시지 생성"}
+            {loading ? "생성 중..." : "커밋 메시지 생성"}
           </Text>
         </TouchableOpacity>
 
-        {/* 결과창 */}
-        {result ? (
-          <View style={styles.resultBox}>
-            <Text style={styles.resultTitle}>[ 결과 메시지 ]</Text>
-            <Text style={styles.resultText}>{result}</Text>
-          </View>
-        ) : null}
-      </ScrollView>
+        <View style={styles.resultArea}>
+          <Text style={styles.subTitle}>History</Text>
+          <ScrollView style={styles.historyList}>
+            {history.length === 0 ? (
+              <Text style={styles.emptyText}>결과가 여기에 표시됩니다.</Text>
+            ) : (
+              history.map((item) => (
+                <View key={item.id} style={styles.historyCard}>
+                  <Text style={styles.timestamp}>{item.timestamp}</Text>
+                  <View style={styles.resultBox}>
+                    <Text style={styles.resultText}>{item.result}</Text>
+                  </View>
+                </View>
+              ))
+            )}
+          </ScrollView>
+        </View>
+      </View>
     </View>
   );
 }
@@ -103,67 +119,97 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
-    alignItems: "center",
+    backgroundColor: "#F5F7FA",
+    // ★ 핵심: SafeAreaView 대신 여기서 위쪽 여백을 줘서 노치를 피함
+    paddingTop: 60,
   },
-  scrollContent: {
-    padding: 20,
+  contentContainer: {
+    flex: 1,
+    paddingHorizontal: 20, // 좌우 여백
+    paddingBottom: 20, // 아래 여백
     width: "100%",
-    maxWidth: 700,
+    maxWidth: 800,
+    alignSelf: "center",
   },
-  title: {
-    fontSize: 32,
+  headerTitle: {
+    fontSize: 24,
     fontWeight: "bold",
-    textAlign: "center",
-    marginTop: 40,
-    marginBottom: 30,
     color: "#333",
+    marginBottom: 15,
+    textAlign: "center",
+  },
+  inputContainer: {
+    flex: 4,
+    marginBottom: 15,
   },
   label: {
-    fontSize: 16,
-    marginBottom: 8,
+    fontSize: 14,
     fontWeight: "600",
     color: "#555",
+    marginBottom: 8,
   },
   input: {
+    flex: 1,
     backgroundColor: "white",
-    height: 200,
     borderRadius: 12,
     padding: 15,
-    fontSize: 16,
+    fontSize: 14,
+    fontFamily: "monospace",
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: "#E1E4E8",
   },
   button: {
     backgroundColor: "#222",
-    padding: 18,
+    paddingVertical: 16,
     borderRadius: 12,
-    marginTop: 20,
     alignItems: "center",
-    cursor: "pointer",
+    marginBottom: 20,
   },
   buttonText: {
     color: "white",
     fontSize: 16,
     fontWeight: "bold",
   },
-  resultBox: {
-    marginTop: 30,
-    backgroundColor: "white",
-    padding: 20,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "#ddd",
+  resultArea: {
+    flex: 5,
   },
-  resultTitle: {
-    fontSize: 16,
+  subTitle: {
+    fontSize: 18,
     fontWeight: "bold",
-    color: "#222",
+    color: "#333",
     marginBottom: 10,
   },
+  historyList: {
+    flex: 1,
+  },
+  historyCard: {
+    backgroundColor: "white",
+    borderRadius: 12,
+    padding: 15,
+    marginBottom: 15,
+    borderWidth: 1,
+    borderColor: "#E1E4E8",
+  },
+  timestamp: {
+    fontSize: 12,
+    color: "#999",
+    marginBottom: 5,
+    textAlign: "right",
+  },
+  resultBox: {
+    backgroundColor: "#F0F4F8",
+    padding: 12,
+    borderRadius: 8,
+  },
   resultText: {
-    fontSize: 16,
-    lineHeight: 24,
-    color: "#444",
+    fontSize: 15,
+    color: "#333",
+    lineHeight: 22,
+    fontWeight: "500",
+  },
+  emptyText: {
+    textAlign: "center",
+    color: "#aaa",
+    marginTop: 20,
   },
 });
