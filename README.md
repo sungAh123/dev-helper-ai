@@ -49,7 +49,7 @@
 ### 1.저장소 클론
 
 ```bash
-git clone [https://github.com/your-username/your-repo-name.git](https://github.com/sungAh123/dev-helper-ai.git)
+git clone https://github.com/sungAh123/dev-helper-ai.git
 cd dev-helper-ai
 ```
 
