@@ -23,14 +23,16 @@
 ## 기술 스택
 
 ### Frontend
-
-* Expo (React Native)
-* TypeScript
+- Expo (React Native)
+- TypeScript
 
 ### Backend
+- Python 3.9
+- FastAPI (Uvicorn)
 
-* Docker
-* docker-compose
+### Infrastructure
+- Docker
+- Docker Compose
 
 ---
 
