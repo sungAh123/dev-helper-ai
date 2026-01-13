@@ -1,50 +1,87 @@
-# Welcome to your Expo app 👋
+# AI Commit Message Generator
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+코드를 입력하면 **AI가 커밋 메시지를 생성**해주는 간단한 프로젝트입니다.
+프론트엔드는 **Expo(React Native)**, 백엔드는 **Docker 기반 서버**로 구성되어 있습니다.
 
-## Get started
+---
 
-1. Install dependencies
+## 미리보기
+<img width="452" height="294" alt="image" src="https://github.com/user-attachments/assets/c7e45ace-e920-491a-b34f-65707fbdcd62" />
+<img width="452" height="348" alt="image" src="https://github.com/user-attachments/assets/5faa9234-1762-4390-af98-a696fd5dd7da" />
+<img width="452" height="176" alt="image" src="https://github.com/user-attachments/assets/71486146-194b-4d4b-a4bb-6ae1aaf936e2" />
 
-   ```bash
-   npm install
-   ```
+---
 
-2. Start the app
+## 주요 기능
 
-   ```bash
-   npx expo start
-   ```
+* 코드(diff) 입력
+* AI 기반 커밋 메시지 생성
+* 결과 메시지 화면 출력
 
-In the output, you'll find options to open the app in a
+---
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## 기술 스택
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+### Frontend
 
-## Get a fresh project
+* Expo (React Native)
+* TypeScript
 
-When you're ready, run:
+### Backend
+
+* Docker
+* docker-compose
+
+---
+
+## 화면 구성
+
+* 코드 입력 TextInput
+* 커밋 메시지 생성 버튼
+* 결과 출력 영역
+
+---
+
+## 실행 방법
+
+### 1.저장소 클론
 
 ```bash
-npm run reset-project
+git clone [https://github.com/your-username/your-repo-name.git](https://github.com/sungAh123/dev-helper-ai.git)
+cd dev-helper-ai
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### 2.Docker 실행 (백엔드)
 
-## Learn more
+```bash
+docker-compose up --build
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+### 3.Expo 실행
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```bash
+npm install
+npx expo start
+```
 
-## Join the community
+---
 
-Join our community of developers creating universal apps.
+## 프로젝트 구조
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+```text
+.
+├── app/                # Expo Router (프론트엔드)
+│   └── index.tsx       # 메인 화면
+├── server/             # 백엔드 서버
+│   ├── main.py         # 서버 엔트리 포인트
+│   └── Dockerfile
+├── docker-compose.yml  # 전체 서비스 오케스트레이션
+└── README.md
+
+```
+
+---
+
+## 개발자
+
+* GitHub: [https://github.com/sungAh123](https://github.com/sungAh123)
